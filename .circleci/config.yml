@@ -8,8 +8,8 @@ jobs:
       - restore_cache:
           key: npm-cache-{{ checksum "package-lock.json" }}
       - run:
-          name: Install Dependencies
-          command: npm install
+          name: Install Dependecies
+          command: install npm
       - save_cache:
           paths:
             - ~/.npm
@@ -18,15 +18,15 @@ jobs:
           name: Building the application
           command: npm run build:prod
       - run:
-          name: Install Chrome
-          command: |
+          name: Install Chrome Headerless
+          command: | 
             sudo apt-get update
             sudo apt-get install -y libappindicator1 fonts-liberation libu2f-udev libvulkan1
             wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
             sudo dpkg -i google-chrome-stable_current_amd64.deb
             sudo apt-get install -f
       - run:
-          name: Run test cases
+          name: Run the test cases
           command: npm run test:headless
       - store_test_results:
           path: test-results
@@ -34,26 +34,28 @@ jobs:
           root: ~/project
           paths:
             - dist 
-            - node_modules
+            - modules
       - run:
           name: Install AWS CLI
-          command: |
+          command: | 
             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
             unzip awscliv2.zip
-            sudo ./aws/install  
+            sudo ./aws/install
       - run:
-          name: Deploy to S3
-          command: |
+          name: Sync to S3
+          command: | 
             DIST_OUTPUT_DIR==$(find dist -maxdepth 1 -type d | awk 'NR==2')
-            aws s3 sync dist/toh/browser/ s3://$S3_BUCKET_NAME --delete
-
+            aws s3 sync ${DIST_OUTPUT_DIR}/browser/ s3://$S3_BUCKET_NAME --delete
 workflows:
   version: 2
   build_test_deploy:
     jobs:
+      # - test
       - build-prod:
+          # requires:
+          #   - test
           filters:
             branches:
               only:
-                - manin
+                - main
                 - master
