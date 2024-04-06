@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build-pord:
+  build-prod:
     docker:
       - image: cimg/node:18.20.0-browsers
     steps:
@@ -16,7 +16,7 @@ jobs:
           key: npm-cache-{{ checksum "package-lock.json"}}
       - run:
           name: Building the application
-          command: npm run build-pord
+          command: npm run build-prod
       - run:
           name: Install Chrome
           command: |
@@ -51,7 +51,7 @@ workflows:
   version: 2
   build_test_deploy:
     jobs:
-      - build-pord:
+      - build-prod:
           filters:
             branches:
               only:
