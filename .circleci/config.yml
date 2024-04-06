@@ -45,7 +45,7 @@ jobs:
           name: Sync to S3
           command: | 
             DIST_OUTPUT_DIR==$(find dist -maxdepth 1 -type d | awk 'NR==2')
-            aws s3 sync ${DIST_OUTPUT_DIR}/browser/ s3://$S3_BUCKET_NAME --delete
+            aws s3 sync dist/toh/browser/ s3://$S3_BUCKET_NAME --delete
 workflows:
   version: 2
   build_test_deploy:
